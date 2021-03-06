@@ -12,5 +12,6 @@
     "ext-curl": "*",
     "ext-json": "*"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "description": "word to anki"
 }
