@@ -357,7 +357,7 @@ function anki($dict): bool
     }
     $image = $dict['image'];
     if (!empty($image)) {
-        $dict['image'] = $dict['term'].'.png';
+        $dict['image'] = '<img src="'.$dict['term'].'.png'.'" alt="" onerror="this.style.display=\'none\'" style="max-height:120px">';
     }
     $BrEPron = htmlspecialchars_decode($dict['BrEPron']);
     $AmEPron = htmlspecialchars_decode($dict['AmEPron']);
@@ -395,7 +395,7 @@ function anki($dict): bool
         $params = [
             'filename' => $dict['term'].'.'.$ext, 'url' => $image,
         ];
-        $note['params']['note']['fields']['image'] = $params['filename'];
+        $note['params']['note']['fields']['image'] = '<img src="'.$params['filename'].'" alt="" onerror="this.style.display=\'none\'" style="max-height:120px">';
     } else {
         $local_file = uniqid('', true);
         $ret = down_file($image, $local_file);
@@ -414,7 +414,7 @@ function anki($dict): bool
                 $params = [
                     'filename' => $dict['term'].'.'.$ext, 'data' => base64_encode($content),
                 ];
-                $note['params']['note']['fields']['image'] = $params['filename'];
+                $note['params']['note']['fields']['image'] = '<img src="'.$params['filename'].'" alt="" onerror="this.style.display=\'none\'" style="max-height:120px">';
             }
         }
         unlink($local_file);
@@ -496,7 +496,7 @@ function createModel()
 <h1 class="term">{{term}}</h1>
 <hr>
 <div class="phons">🇬🇧 <span class="phonetic">{{BrEPhonetic}}</span>  🇺🇸 <span class="phonetic">{{AmEPhonetic}}</span></div>
-<div style="text-align:center;"><img src="{{image}}" alt="" onerror="this.style.display='none'" style="max-height:120px"></div>
+<div style="text-align:center;">{{image}}</div>
 <hr>
 短语：
 <div>{{phraseFront}}</div>
@@ -513,7 +513,7 @@ end, 'Back' => <<<end
 <h1 class="term">{{term}}</h1>
 <hr>
 <div class="phons">🇬🇧 <span class="phonetic">{{BrEPhonetic}}</span>  🇺🇸 <span class="phonetic">{{AmEPhonetic}}</span></div>
-<div style="text-align:center;"><img src="{{image}}" alt="" onerror="this.style.display='none'" style="max-height:120px"></div>
+<div style="text-align:center;">{{image}}</div>
 <hr>
 释义：
 <div>{{definition}}</div>
