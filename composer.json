@@ -1,0 +1,16 @@
+{
+  "name": "yveshield/word2anki",
+  "authors": [
+    {
+      "name": "yveshield",
+      "email": "yveshield@gmail.com"
+    }
+  ],
+  "require": {
+    "voku/simple_html_dom": "^4.7",
+    "voku/portable-utf8": "^5.4",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "license": "MIT"
+}
