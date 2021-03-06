@@ -10,7 +10,9 @@
     "voku/simple_html_dom": "^4.7",
     "voku/portable-utf8": "^5.4",
     "ext-curl": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-fileinfo": "*",
+    "ext-exif": "*"
   },
   "license": "MIT",
   "description": "word to anki"

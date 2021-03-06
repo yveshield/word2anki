@@ -25,7 +25,6 @@ const MODEL_NAME = 'Word2Anki';
 
 const MODEL_FIELDS = ['term', 'definition', 'sentenceFront', 'sentenceBack', 'phraseFront', 'phraseBack', 'image', 'BrEPhonetic', 'AmEPhonetic', 'BrEPron', 'AmEPron'];  # 名称不可修改
 
-
 $flag = 0;
 $flag_file = __DIR__.'/offset.txt'; // 存放从词典取生词的标识
 if (is_file($flag_file) && is_readable($flag_file)) {
@@ -387,19 +386,87 @@ function anki($dict): bool
     if (empty($BrEPron) && empty($AmEPron)) {
         unset($note['params']['note']['audio']);
     }
-    $multi['action'] = 'multi';
-    $multi['params'] = [
-        'actions' => [
-            ['action' => 'storeMediaFile', 'params' => ['filename' => $dict['term'].'.png', 'url' => $image,],], $note,
-        ],
-    ];
     if (empty($image)) {
         $data = posturl($note);
         return !empty($data['result']) || $data['error'] == 'cannot create note because it is a duplicate';
-    } else {
-        $data = posturl($multi);
-        return !empty($data[1]['result'] || $data[1]['error'] == 'cannot create note because it is a duplicate');
     }
+    $ext = url_ext($image);
+    if (!empty($ext)) {
+        $params = [
+            'filename' => $dict['term'].'.'.$ext, 'url' => $image,
+        ];
+        $note['params']['note']['fields']['image'] = $params['filename'];
+    } else {
+        $local_file = uniqid('', true);
+        $ret = down_file($image, $local_file);
+        if (!$ret) {
+            $params = [
+                'filename' => $dict['term'].'.png', 'url' => $image,
+            ];
+        } else {
+            $ext = file_ext($local_file);
+            $content = file_get_contents($local_file);
+            if (empty($ext) || !$content) {
+                $params = [
+                    'filename' => $dict['term'].'.png', 'url' => $image,
+                ];
+            } else {
+                $params = [
+                    'filename' => $dict['term'].'.'.$ext, 'data' => base64_encode($content),
+                ];
+                $note['params']['note']['fields']['image'] = $params['filename'];
+            }
+        }
+        unlink($local_file);
+    }
+    $multi['action'] = 'multi';
+    $multi['params'] = [
+        'actions' => [
+            ['action' => 'storeMediaFile', 'params' => $params], $note,
+        ],
+    ];
+    $data = posturl($multi);
+    return !empty($data[1]['result'] || $data[1]['error'] == 'cannot create note because it is a duplicate');
+}
+
+function down_file($url, $file): bool
+{
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    $fp = fopen($file, 'w+');
+    curl_setopt($curl, CURLOPT_FILE, $fp);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 50);
+
+    curl_exec($curl);
+
+    $return = curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200;
+
+    fclose($fp);
+    curl_close($curl);
+    return $return;
+}
+
+function url_ext($url): string
+{
+    $extension = pathinfo($url, PATHINFO_EXTENSION);
+    $extension = explode('?', $extension)[0];
+    if (in_array($extension, ['bmp', 'gif', 'jpeg', 'jpg', 'png', 'svg', 'tiff', 'webp'])) {
+        return $extension;
+    }
+    return '';
+}
+
+function file_ext($file): string
+{
+    $finfo = finfo_open(FILEINFO_EXTENSION); // gib den MIME-Typ nach Art der mimetype Extension zurück
+    $extensions = finfo_file($finfo, $file);
+    finfo_close($finfo);
+    if (!$extensions) {
+        return '';
+    }
+    $extensions = explode('/', $extensions);
+    return $extensions[0];
 }
 
 function findNotes($word): bool
@@ -429,7 +496,7 @@ function createModel()
 <h1 class="term">{{term}}</h1>
 <hr>
 <div class="phons">🇬🇧 <span class="phonetic">{{BrEPhonetic}}</span>  🇺🇸 <span class="phonetic">{{AmEPhonetic}}</span></div>
-<div style="text-align:center;"><img src="{{image}}" style="max-height:120px"></div>
+<div style="text-align:center;"><img src="{{image}}" alt="" onerror="this.style.display='none'" style="max-height:120px"></div>
 <hr>
 短语：
 <div>{{phraseFront}}</div>
@@ -446,7 +513,7 @@ end, 'Back' => <<<end
 <h1 class="term">{{term}}</h1>
 <hr>
 <div class="phons">🇬🇧 <span class="phonetic">{{BrEPhonetic}}</span>  🇺🇸 <span class="phonetic">{{AmEPhonetic}}</span></div>
-<div style="text-align:center;"><img src="{{image}}" style="max-height:120px"></div>
+<div style="text-align:center;"><img src="{{image}}" alt="" onerror="this.style.display='none'" style="max-height:120px"></div>
 <hr>
 释义：
 <div>{{definition}}</div>
