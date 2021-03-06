@@ -2,7 +2,7 @@
 
 use voku\helper\HtmlDomParser;
 
-require "vendor/autoload.php";
+require 'vendor/autoload.php';
 
 // 感谢 https://foosoft.net/projects/anki-connect/
 // 感谢 https://ankiweb.net/shared/info/1284759083
@@ -23,7 +23,7 @@ const PAGE_SIZE = 100;
 
 const MODEL_NAME = 'Word2Anki';
 
-const MODEL_FIELDS = ['term', 'definition', 'sentenceFront', 'sentenceBack', 'phraseFront', 'phraseBack', 'image', 'BrEPhonetic', 'AmEPhonetic', 'BrEPron', 'AmEPron'];  # 名称不可修改
+const MODEL_FIELDS = ['term', 'image', 'definition', 'sentenceFront', 'sentenceBack', 'phraseFront', 'phraseBack', 'BrEPhonetic', 'AmEPhonetic', 'BrEPron', 'AmEPron'];  // 名称不可修改
 
 $flag = 0;
 $flag_file = __DIR__.'/offset.txt'; // 存放从词典取生词的标识
@@ -49,13 +49,13 @@ while (true) {
     $fields[] = 'phrase';
     $index = $start * PAGE_SIZE;
     foreach ($data['data'] as $id => $datum) {
-        $index++;
+        ++$index;
         if (!findNotes($datum['word'])) {
             $em = 0;
             $pa = peu(...eu($datum['word']));
             foreach ($fields as $field) {
                 if (empty($pa[$field])) {
-                    $em++;
+                    ++$em;
                 }
             }
             if ($em > 1) {
@@ -79,7 +79,7 @@ while (true) {
     if (count($data['data']) < PAGE_SIZE) {
         break;
     }
-    $start++;
+    ++$start;
 }
 
 function study($auth, $page = 1)
@@ -92,12 +92,11 @@ function study($auth, $page = 1)
         'Authorization: '.$auth,
     ]);
     $response = curl_exec($ch);
-    if (!$response || curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
+    if (!$response || 200 != curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
         die('Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch));
     }
-    //echo 'HTTP Status Code: '.curl_getinfo($ch, CURLINFO_HTTP_CODE).PHP_EOL;
-    //echo 'Response Body: '.$response.PHP_EOL;
     curl_close($ch);
+
     return $response;
 }
 
@@ -120,9 +119,8 @@ function yd($word): array
     if (!$response) {
         die('Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch));
     }
-    //echo 'HTTP Status Code: ' . curl_getinfo($ch, CURLINFO_HTTP_CODE) . PHP_EOL;
-    //echo 'Response Body: ' . $response . PHP_EOL;
     curl_close($ch);
+
     return [$word, $response];
 }
 
@@ -194,13 +192,14 @@ function pyd($word, $resp): array
             }
         }
     }
+
     return [
         'term' => $word, 'definition' => $exp, 'phrase' => $phrase, 'image' => $image, 'sentence' => $sentence, 'BrEPhonetic' => $pron['BrEPhonetic'],
         'AmEPhonetic' => $pron['AmEPhonetic'], 'BrEPron' => $pron['BrEUrl'], 'AmEPron' => $pron['AmEUrl'],
     ];
 }
 
-// 查询欧陆词典
+// 查询欧路词典
 function eu($word): array
 {
     $ch = curl_init();
@@ -213,12 +212,12 @@ function eu($word): array
     ]);
     $response = curl_exec($ch);
     if (!$response) {
-        echo('Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch));
+        echo 'Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch)."\n";
+
         return [$word, ''];
     }
-    //echo 'HTTP Status Code: ' . curl_getinfo($ch, CURLINFO_HTTP_CODE) . PHP_EOL;
-    //echo 'Response Body: ' . $response . PHP_EOL;
     curl_close($ch);
+
     return [$word, $response];
 }
 
@@ -279,7 +278,7 @@ function peu($word, $resp): array
     if (!empty($phons)) {
         $pron['BrEPhonetic'] = trim($phons[0]->plaintext);
         if (!empty($links[0]) && !empty($links[0]->getAttribute('data-rel'))) {
-            if (strpos($links[0]->getAttribute('data-rel'), 'http') !== 0) {
+            if (0 !== strpos($links[0]->getAttribute('data-rel'), 'http')) {
                 $pron['BrEUrl'] = $audio_url.$links[0]->getAttribute('data-rel');
             } else {
                 $pron['BrEUrl'] = $links[0]->getAttribute('data-rel');
@@ -287,7 +286,7 @@ function peu($word, $resp): array
         }
         $pron['AmEPhonetic'] = trim(empty($phons[1]) ? $phons[0]->plaintext : $phons[1]->plaintext);
         if (!empty($links[1]) && !empty($links[1]->getAttribute('data-rel'))) {
-            if (strpos($links[1]->getAttribute('data-rel'), 'http') !== 0) {
+            if (0 !== strpos($links[1]->getAttribute('data-rel'), 'http')) {
                 $pron['AmEUrl'] = $audio_url.$links[1]->getAttribute('data-rel');
             } else {
                 $pron['AmEUrl'] = $links[1]->getAttribute('data-rel');
@@ -313,7 +312,7 @@ function peu($word, $resp): array
     $image = '';
     if (empty($div->getAttribute('title'))) {
         $image = $div->getAttribute('src');
-        if (!empty($image) && strpos($image, 'http') !== 0) {
+        if (!empty($image) && 0 !== strpos($image, 'http')) {
             $image = 'https:'.$image;
         }
     }
@@ -327,6 +326,7 @@ function peu($word, $resp): array
             $phrase[] = [$i->plaintext, $o->plaintext];
         }
     }
+
     return [
         'term' => $word, 'definition' => $exp, 'phrase' => $phrase, 'image' => $image, 'sentence' => $sentences, 'BrEPhonetic' => $pron['BrEPhonetic'],
         'AmEPhonetic' => $pron['AmEPhonetic'], 'BrEPron' => $pron['BrEUrl'], 'AmEPron' => $pron['AmEUrl'],
@@ -338,17 +338,17 @@ function anki($dict): bool
     if (empty($dict)) {
         return false;
     }
-    if (strpos($dict['BrEPhonetic'], '/') === false && !empty($dict['BrEPhonetic'])) {
+    if (false === strpos($dict['BrEPhonetic'], '/') && !empty($dict['BrEPhonetic'])) {
         $dict['BrEPhonetic'] = "/{$dict['BrEPhonetic']}/";
     }
-    if (strpos($dict['AmEPhonetic'], '/') === false && !empty($dict['AmEPhonetic'])) {
+    if (false === strpos($dict['AmEPhonetic'], '/') && !empty($dict['AmEPhonetic'])) {
         $dict['AmEPhonetic'] = "/{$dict['AmEPhonetic']}/";
     }
     $even = ' class="even"';
     $odd = ' class="odd"';
     $definition = '';
     foreach ($dict['definition'] as $idx => $item) {
-        $s = $idx % 2 == 1 ? $odd : $even;
+        $s = 1 == $idx % 2 ? $odd : $even;
         $definition .= '<div'.$s.'>'.$item.'</div>';
     }
     $dict['definition'] = $definition;
@@ -357,7 +357,7 @@ function anki($dict): bool
         $dict["{$value}Back"] = '';
         if (!empty($dict["{$value}"])) {
             foreach ($dict["{$value}"] as $idx => $item) {
-                $s = $idx % 2 == 1 ? $odd : $even;
+                $s = 1 == $idx % 2 ? $odd : $even;
                 $dict["{$value}Front"] .= '<div'.$s.'>'.$item[0].'</div>';
                 $dict["{$value}Back"] .= '<div'.$even.'>'.$item[0].'</div><div'.$odd.'>'.$item[1].'</div>';
             }
@@ -397,7 +397,8 @@ function anki($dict): bool
     }
     if (empty($image)) {
         $data = posturl($note);
-        return !empty($data['result']) || $data['error'] == 'cannot create note because it is a duplicate';
+
+        return !empty($data['result']) || 'cannot create note because it is a duplicate' == $data['error'];
     }
     $local_file = uniqid('', true);
     $ret = down_file($image, $local_file);
@@ -429,7 +430,8 @@ function anki($dict): bool
         ],
     ];
     $data = posturl($multi);
-    return !empty($data[1]['result'] || $data[1]['error'] == 'cannot create note because it is a duplicate');
+
+    return !empty($data[1]['result'] || 'cannot create note because it is a duplicate' == $data[1]['error']);
 }
 
 function down_file($url, $file): bool
@@ -443,10 +445,11 @@ function down_file($url, $file): bool
 
     curl_exec($curl);
 
-    $return = curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200;
+    $return = 200 == curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
     fclose($fp);
     curl_close($curl);
+
     return $return;
 }
 
@@ -459,6 +462,7 @@ function file_ext($file): string
         return '';
     }
     $extensions = explode('/', $extensions);
+
     return $extensions[0];
 }
 
@@ -466,6 +470,7 @@ function findNotes($word): bool
 {
     $json = '{"action":"findNotes","version":6,"params":{"query":"deck:'.DECK_NAME.' term:'.$word.'"}}';
     $notes = posturl($json);
+
     return !empty($notes['result']);
 }
 
@@ -565,7 +570,7 @@ function deckNames()
 {
     $json = '{"action": "deckNames","version": 6}';
     $decks = posturl($json);
-    if (empty($decks['result']) || array_search(DECK_NAME, $decks['result']) === false) {
+    if (empty($decks['result']) || false === array_search(DECK_NAME, $decks['result'])) {
         createDeck();
     }
 }
@@ -592,7 +597,6 @@ function posturl($data)
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $output = curl_exec($curl);
     curl_close($curl);
-    //echo $output."\n";
 
     return json_decode($output, true);
 }
