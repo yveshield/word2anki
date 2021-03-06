@@ -43,15 +43,32 @@ while (true) {
     if (empty($data['data'])) {
         die('Empty');
     }
+    $fields = MODEL_FIELDS;
+    unset($fields['sentenceFront'], $fields['sentenceBack'], $fields['phraseFront'], $fields['phraseBack']);
+    $fields[] = 'sentence';
+    $fields[] = 'phrase';
     $index = $start * PAGE_SIZE;
     foreach ($data['data'] as $id => $datum) {
         $index++;
         if (!findNotes($datum['word'])) {
-            if (!anki(peu(...eu($datum['word'])))) {
-                if (!anki(pyd(...yd($datum['word'])))) {
-                    echo $datum['word']." Fail\n";
-                    continue;
+            $em = 0;
+            $pa = peu(...eu($datum['word']));
+            foreach ($fields as $field) {
+                if (empty($pa[$field])) {
+                    $em++;
                 }
+            }
+            if ($em > 1) {
+                $pb = pyd(...yd($datum['word']));
+                foreach ($fields as $field) {
+                    if (empty($pa[$field])) {
+                        $pa[$field] = !empty($pb[$field]) ? $pb[$field] : '';
+                    }
+                }
+            }
+            if (!anki($pa)) {
+                echo $datum['word']." Fail\n";
+                continue;
             }
         }
         echo $datum['word']." OK\n";
@@ -116,14 +133,12 @@ function pyd($word, $resp): array
     if (!$data) {
         return [];
     }
-    //print_r($data);
     $ec = [];
     if (!empty($data['ec']['word'][0]['trs'])) {
         foreach ($data['ec']['word'][0]['trs'] as $pair) {
             $ec[] = $pair['tr'][0]['l']['i'][0];
         }
     }
-    //var_dump($ec);
     $ee = [];
     if (!empty($data['ee']['word']['trs'])) {
         foreach ($data['ee']['word']['trs'] as $pair) {
@@ -131,14 +146,12 @@ function pyd($word, $resp): array
         }
     }
     $exp = array_merge($ec, $ee);
-    //var_dump($ee);
     $web_trans = [];
     if (!empty($data['web_trans']['web-translation'][0]['trans'])) {
         foreach ($data['web_trans']['web-translation'][0]['trans'] as $tran) {
             $web_trans[] = $tran['value'];
         }
     }
-    //var_dump($web_trans);
     if (empty($exp)) {
         $exp = $web_trans;
     }
@@ -163,19 +176,16 @@ function pyd($word, $resp): array
     if (!empty($data['simple']['word'][0]['ukspeech'])) {
         $pron['BrEUrl'] = $audio_url.$data['simple']['word'][0]['ukspeech'];
     }
-    //var_dump($pron);
     $sentence = [];
     if (!empty($data['blng_sents_part']['sentence-pair'])) {
         foreach ($data['blng_sents_part']['sentence-pair'] as $pair) {
             $sentence[] = [$pair['sentence-eng'], $pair['sentence-translation']];
         }
     }
-    //var_dump($sentence);
     $image = '';
     if (!empty($data['pic_dict']['pic'][0]['image'])) {
         $image = $data['pic_dict']['pic'][0]['image'];
     }
-    //var_dump($image);
     $phrase = [];
     if (!empty($data['phrs']['phrs'])) {
         foreach ($data['phrs']['phrs'] as $pair) {
@@ -184,7 +194,6 @@ function pyd($word, $resp): array
             }
         }
     }
-    //var_dump($phrase);
     return [
         'term' => $word, 'definition' => $exp, 'phrase' => $phrase, 'image' => $image, 'sentence' => $sentence, 'BrEPhonetic' => $pron['BrEPhonetic'],
         'AmEPhonetic' => $pron['AmEPhonetic'], 'BrEPron' => $pron['BrEUrl'], 'AmEPron' => $pron['AmEUrl'],
@@ -217,13 +226,13 @@ function eu($word): array
 function peu($word, $resp): array
 {
     if (empty($resp)) {
-        return [];
+        return ['term' => $word];
     }
     $dom = HtmlDomParser::str_get_html($resp);
 
     $div = $dom->findOne('#ExpFCChild');
     if (empty($div)) {
-        return [];
+        return ['term' => $word];
     }
     $exp = [];
     $li = $div->findMulti('li');
@@ -250,41 +259,39 @@ function peu($word, $resp): array
             $exp[] = trim(strip_tags($in));
         }
     }
-    if (empty($exp)) {
-        return [];
-    }
 
     $audio_url = 'https://api.frdic.com/api/v2/speech/speakweb?';
     $div = $dom->findOne('.phonitic-line');
     $links = $div->findMultiOrFalse('a');
     $phons = $div->findMultiOrFalse('.Phonitic');
-    if (!$phons) {
-        return [];
-    }
     if (!$links) {
         $link = $div->findOne('div .gv_details .voice-button');
         $links = [$link, $link]; // 没错返回相同的
     }
     // 英式音标
-    $pron['BrEPhonetic'] = trim($phons[0]->plaintext);
+    $pron['BrEPhonetic'] = '';
     // 英式发音url
     $pron['BrEUrl'] = '';
-    if (!empty($links[0]) && !empty($links[0]->getAttribute('data-rel'))) {
-        if (strpos($links[0]->getAttribute('data-rel'), 'http') !== 0) {
-            $pron['BrEUrl'] = $audio_url.$links[0]->getAttribute('data-rel');
-        } else {
-            $pron['BrEUrl'] = $links[0]->getAttribute('data-rel');
-        }
-    }
     // 美式音标
-    $pron['AmEPhonetic'] = trim(empty($phons[1]) ? $phons[0]->plaintext : $phons[1]->plaintext);
+    $pron['AmEPhonetic'] = '';
     // 美式发音url
     $pron['AmEUrl'] = '';
-    if (!empty($links[1]) && !empty($links[1]->getAttribute('data-rel'))) {
-        if (strpos($links[1]->getAttribute('data-rel'), 'http') !== 0) {
-            $pron['AmEUrl'] = $audio_url.$links[1]->getAttribute('data-rel');
-        } else {
-            $pron['AmEUrl'] = $links[1]->getAttribute('data-rel');
+    if (!empty($phons)) {
+        $pron['BrEPhonetic'] = trim($phons[0]->plaintext);
+        if (!empty($links[0]) && !empty($links[0]->getAttribute('data-rel'))) {
+            if (strpos($links[0]->getAttribute('data-rel'), 'http') !== 0) {
+                $pron['BrEUrl'] = $audio_url.$links[0]->getAttribute('data-rel');
+            } else {
+                $pron['BrEUrl'] = $links[0]->getAttribute('data-rel');
+            }
+        }
+        $pron['AmEPhonetic'] = trim(empty($phons[1]) ? $phons[0]->plaintext : $phons[1]->plaintext);
+        if (!empty($links[1]) && !empty($links[1]->getAttribute('data-rel'))) {
+            if (strpos($links[1]->getAttribute('data-rel'), 'http') !== 0) {
+                $pron['AmEUrl'] = $audio_url.$links[1]->getAttribute('data-rel');
+            } else {
+                $pron['AmEUrl'] = $links[1]->getAttribute('data-rel');
+            }
         }
     }
 
@@ -306,7 +313,7 @@ function peu($word, $resp): array
     $image = '';
     if (empty($div->getAttribute('title'))) {
         $image = $div->getAttribute('src');
-        if (strpos($image, 'http') !== 0) {
+        if (!empty($image) && strpos($image, 'http') !== 0) {
             $image = 'https:'.$image;
         }
     }
@@ -348,10 +355,12 @@ function anki($dict): bool
     foreach (['phrase', 'sentence'] as $value) {
         $dict["{$value}Front"] = '';
         $dict["{$value}Back"] = '';
-        foreach ($dict["{$value}"] as $idx => $item) {
-            $s = $idx % 2 == 1 ? $odd : $even;
-            $dict["{$value}Front"] .= '<div'.$s.'>'.$item[0].'</div>';
-            $dict["{$value}Back"] .= '<div'.$even.'>'.$item[0].'</div><div'.$odd.'>'.$item[1].'</div>';
+        if (!empty($dict["{$value}"])) {
+            foreach ($dict["{$value}"] as $idx => $item) {
+                $s = $idx % 2 == 1 ? $odd : $even;
+                $dict["{$value}Front"] .= '<div'.$s.'>'.$item[0].'</div>';
+                $dict["{$value}Back"] .= '<div'.$even.'>'.$item[0].'</div><div'.$odd.'>'.$item[1].'</div>';
+            }
         }
         unset($dict["{$value}"]);
     }
@@ -390,35 +399,29 @@ function anki($dict): bool
         $data = posturl($note);
         return !empty($data['result']) || $data['error'] == 'cannot create note because it is a duplicate';
     }
-    $ext = url_ext($image);
-    if (!empty($ext)) {
+    $local_file = uniqid('', true);
+    $ret = down_file($image, $local_file);
+    if (!$ret) {
         $params = [
-            'filename' => $dict['term'].'.'.$ext, 'url' => $image,
+            'filename' => $dict['term'].'.png', 'url' => $image,
         ];
-        $note['params']['note']['fields']['image'] = '<img src="'.$params['filename'].'" alt="" onerror="this.style.display=\'none\'" style="max-height:120px">';
+        echo $dict['term'], ' ', $image, "\n";
     } else {
-        $local_file = uniqid('', true);
-        $ret = down_file($image, $local_file);
-        if (!$ret) {
+        $ext = file_ext($local_file);
+        $content = file_get_contents($local_file);
+        if (empty($ext) || !$content) {
             $params = [
                 'filename' => $dict['term'].'.png', 'url' => $image,
             ];
+            echo $dict['term'], ' ', $image, "\n";
         } else {
-            $ext = file_ext($local_file);
-            $content = file_get_contents($local_file);
-            if (empty($ext) || !$content) {
-                $params = [
-                    'filename' => $dict['term'].'.png', 'url' => $image,
-                ];
-            } else {
-                $params = [
-                    'filename' => $dict['term'].'.'.$ext, 'data' => base64_encode($content),
-                ];
-                $note['params']['note']['fields']['image'] = '<img src="'.$params['filename'].'" alt="" onerror="this.style.display=\'none\'" style="max-height:120px">';
-            }
+            $params = [
+                'filename' => $dict['term'].'.'.$ext, 'data' => base64_encode($content),
+            ];
+            $note['params']['note']['fields']['image'] = '<img src="'.$params['filename'].'" alt="" onerror="this.style.display=\'none\'" style="max-height:120px">';
         }
-        unlink($local_file);
     }
+    unlink($local_file);
     $multi['action'] = 'multi';
     $multi['params'] = [
         'actions' => [
@@ -445,16 +448,6 @@ function down_file($url, $file): bool
     fclose($fp);
     curl_close($curl);
     return $return;
-}
-
-function url_ext($url): string
-{
-    $extension = pathinfo($url, PATHINFO_EXTENSION);
-    $extension = explode('?', $extension)[0];
-    if (in_array($extension, ['bmp', 'gif', 'jpeg', 'jpg', 'png', 'svg', 'tiff', 'webp'])) {
-        return $extension;
-    }
-    return '';
 }
 
 function file_ext($file): string
