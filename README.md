@@ -8,6 +8,8 @@
 
 打开 [这里](https://my.eudic.net/OpenAPI/Authorization) 复制授权码，放到 auth.txt 文件中。
 
+打开 [这里](https://my.eudic.net/studyList) 查找生词本 Id，就藏在源码里，在生词本链接上右链，选择"审查元素"，就可以看到了。
+
 运行：
 ```bash
 php main.php

@@ -14,9 +14,9 @@ if (is_file($auth_file) && is_readable($auth_file)) {
     $auth = (string) file_get_contents($auth_file);
 }
 
-// 生词本ID
+// 生词本ID https://my.eudic.net/studyList
 const BOOK_ID = 1610850441;
-// 牌照名称
+// 牌组名称
 const DECK_NAME = '生词收集';
 
 const PAGE_SIZE = 100;
