@@ -26,6 +26,7 @@ const MODEL_NAME = 'Word2Anki';
 const MODEL_FIELDS = ['term', 'image', 'definition', 'sentenceFront', 'sentenceBack', 'phraseFront', 'phraseBack', 'BrEPhonetic', 'AmEPhonetic', 'BrEPron', 'AmEPron'];  // 名称不可修改
 
 $flag = 0;
+$index = 0;
 $flag_file = __DIR__.'/offset.txt'; // 存放从词典取生词的标识
 if (is_file($flag_file) && is_readable($flag_file)) {
     $flag = (int) file_get_contents($flag_file);
@@ -80,6 +81,10 @@ while (true) {
         break;
     }
     ++$start;
+}
+
+if ($index > $flag) {
+    sync();
 }
 
 function study($auth, $page = 1)
@@ -578,6 +583,12 @@ function deckNames()
 function createDeck()
 {
     $json = '{"action":"createDeck","version":6,"params":{"deck":"'.DECK_NAME.'"}}';
+    posturl($json);
+}
+
+function sync()
+{
+    $json = '{"action":"sync","version":6}';
     posturl($json);
 }
 
