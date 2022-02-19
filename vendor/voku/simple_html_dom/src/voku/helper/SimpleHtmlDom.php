@@ -53,6 +53,11 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
         return $this->getHtmlDomParser()->find($selector, $idx);
     }
 
+    public function getTag(): string
+    {
+        return $this->tag;
+    }
+
     /**
      * Returns an array of attributes.
      *
@@ -159,6 +164,21 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
     }
 
     /**
+     * Remove all attributes
+     *
+     * @return SimpleHtmlDomInterface
+     */
+    public function removeAttributes(): SimpleHtmlDomInterface
+    {
+        if ($this->hasAttributes()) {
+            foreach (array_keys((array)$this->getAllAttributes()) as $attribute) {
+                $this->removeAttribute($attribute);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Replace child node.
      *
      * @param string $string
@@ -203,7 +223,6 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
                 $newDocument->getDocument()->documentElement
             ) {
                 $newNode = $ownerDocument->importNode($newDocument->getDocument()->documentElement, true);
-                /** @noinspection UnusedFunctionResultInspection */
                 $this->node->appendChild($newNode);
             }
         }
@@ -278,7 +297,6 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
                         $fragment->appendChild($tmpNode);
                     }
                 }
-                /** @noinspection UnusedFunctionResultInspection */
                 $html->parentNode->replaceChild($fragment, $html);
             }
         }
@@ -687,6 +705,28 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
     }
 
     /**
+     * Returns the previous sibling of node.
+     *
+     * @return SimpleHtmlDomInterface|null
+     */
+    public function previousNonWhitespaceSibling()
+    {
+        /** @var \DOMNode|null $node */
+        $node = $this->node->previousSibling;
+
+        while ($node && !\trim($node->textContent)) {
+            /** @var \DOMNode|null $node */
+            $node = $node->previousSibling;
+        }
+
+        if ($node === null) {
+            return null;
+        }
+
+        return new static($node);
+    }
+
+    /**
      * @param string|string[]|null $value <p>
      *                                    null === get the current input value
      *                                    text === set a new input value
@@ -725,7 +765,6 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
                 if ($options instanceof SimpleHtmlDomNode) {
                     foreach ($options as $option) {
                         if ($this->hasAttribute('checked')) {
-                            /** @noinspection UnnecessaryCastingInspection */
                             $valuesFromDom[] = (string) $option->getAttribute('value');
                         }
                     }
@@ -791,7 +830,6 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
 
             // Remove doc-type node.
             if ($newDocument->getDocument()->doctype !== null) {
-                /** @noinspection UnusedFunctionResultInspection */
                 $newDocument->getDocument()->doctype->parentNode->removeChild($newDocument->getDocument()->doctype);
             }
 
@@ -818,7 +856,6 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
                     }
 
                     if ($pElement->parentNode !== null) {
-                        /** @noinspection UnusedFunctionResultInspection */
                         $pElement->parentNode->replaceChild($fragment, $pElement);
                     }
                 }
@@ -838,7 +875,6 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
                 }
 
                 if ($body->parentNode !== null) {
-                    /** @noinspection UnusedFunctionResultInspection */
                     $body->parentNode->replaceChild($fragment, $body);
                 }
             }
@@ -870,7 +906,6 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
                     }
                 }
 
-                /** @noinspection UnusedFunctionResultInspection */
                 $html->parentNode->replaceChild($fragment, $html);
             }
         }
@@ -955,5 +990,15 @@ class SimpleHtmlDom extends AbstractSimpleHtmlDom implements \IteratorAggregate,
                     )
                 )
             );
+    }
+
+    /**
+     * Delete
+     *
+     * @return void
+     */
+    public function delete()
+    {
+        $this->outertext='';
     }
 }

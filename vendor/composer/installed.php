@@ -1,105 +1,104 @@
-<?php return array (
-  'root' => 
-  array (
-    'pretty_version' => 'dev-master',
-    'version' => 'dev-master',
-    'aliases' => 
-    array (
+<?php return array(
+    'root' => array(
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'reference' => '1d2757d61e4cedd364073f42b877c78081d23c97',
+        'name' => 'yveshield/word2anki',
+        'dev' => true,
     ),
-    'reference' => 'c0c5c33254e0d94a250552c788a6f7e4145474f6',
-    'name' => 'yveshield/word2anki',
-  ),
-  'versions' => 
-  array (
-    'symfony/css-selector' => 
-    array (
-      'pretty_version' => 'v5.2.4',
-      'version' => '5.2.4.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'f65f217b3314504a1ec99c2d6ef69016bb13490f',
+    'versions' => array(
+        'symfony/css-selector' => array(
+            'pretty_version' => 'v6.0.3',
+            'version' => '6.0.3.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/css-selector',
+            'aliases' => array(),
+            'reference' => '1955d595c12c111629cc814d3f2a2ff13580508a',
+            'dev_requirement' => false,
+        ),
+        'symfony/polyfill-iconv' => array(
+            'pretty_version' => 'v1.24.0',
+            'version' => '1.24.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-iconv',
+            'aliases' => array(),
+            'reference' => 'f1aed619e28cb077fc83fac8c4c0383578356e40',
+            'dev_requirement' => false,
+        ),
+        'symfony/polyfill-intl-grapheme' => array(
+            'pretty_version' => 'v1.24.0',
+            'version' => '1.24.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-intl-grapheme',
+            'aliases' => array(),
+            'reference' => '81b86b50cf841a64252b439e738e97f4a34e2783',
+            'dev_requirement' => false,
+        ),
+        'symfony/polyfill-intl-normalizer' => array(
+            'pretty_version' => 'v1.24.0',
+            'version' => '1.24.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-intl-normalizer',
+            'aliases' => array(),
+            'reference' => '8590a5f561694770bdcd3f9b5c69dde6945028e8',
+            'dev_requirement' => false,
+        ),
+        'symfony/polyfill-mbstring' => array(
+            'pretty_version' => 'v1.24.0',
+            'version' => '1.24.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-mbstring',
+            'aliases' => array(),
+            'reference' => '0abb51d2f102e00a4eefcf46ba7fec406d245825',
+            'dev_requirement' => false,
+        ),
+        'symfony/polyfill-php72' => array(
+            'pretty_version' => 'v1.24.0',
+            'version' => '1.24.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-php72',
+            'aliases' => array(),
+            'reference' => '9a142215a36a3888e30d0a9eeea9766764e96976',
+            'dev_requirement' => false,
+        ),
+        'voku/portable-ascii' => array(
+            'pretty_version' => '1.5.6',
+            'version' => '1.5.6.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../voku/portable-ascii',
+            'aliases' => array(),
+            'reference' => '80953678b19901e5165c56752d087fc11526017c',
+            'dev_requirement' => false,
+        ),
+        'voku/portable-utf8' => array(
+            'pretty_version' => '5.4.51',
+            'version' => '5.4.51.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../voku/portable-utf8',
+            'aliases' => array(),
+            'reference' => '578f5266725dc9880483d24ad0cfb39f8ce170f7',
+            'dev_requirement' => false,
+        ),
+        'voku/simple_html_dom' => array(
+            'pretty_version' => '4.8.2',
+            'version' => '4.8.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../voku/simple_html_dom',
+            'aliases' => array(),
+            'reference' => 'ad13ad8c0f9d333a5651726936c14cb7b1548844',
+            'dev_requirement' => false,
+        ),
+        'yveshield/word2anki' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => '1d2757d61e4cedd364073f42b877c78081d23c97',
+            'dev_requirement' => false,
+        ),
     ),
-    'symfony/polyfill-iconv' => 
-    array (
-      'pretty_version' => 'v1.22.1',
-      'version' => '1.22.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '06fb361659649bcfd6a208a0f1fcaf4e827ad342',
-    ),
-    'symfony/polyfill-intl-grapheme' => 
-    array (
-      'pretty_version' => 'v1.22.1',
-      'version' => '1.22.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '5601e09b69f26c1828b13b6bb87cb07cddba3170',
-    ),
-    'symfony/polyfill-intl-normalizer' => 
-    array (
-      'pretty_version' => 'v1.22.1',
-      'version' => '1.22.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '43a0283138253ed1d48d352ab6d0bdb3f809f248',
-    ),
-    'symfony/polyfill-mbstring' => 
-    array (
-      'pretty_version' => 'v1.22.1',
-      'version' => '1.22.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '5232de97ee3b75b0360528dae24e73db49566ab1',
-    ),
-    'symfony/polyfill-php72' => 
-    array (
-      'pretty_version' => 'v1.22.1',
-      'version' => '1.22.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'cc6e6f9b39fe8075b3dabfbaf5b5f645ae1340c9',
-    ),
-    'voku/portable-ascii' => 
-    array (
-      'pretty_version' => '1.5.6',
-      'version' => '1.5.6.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '80953678b19901e5165c56752d087fc11526017c',
-    ),
-    'voku/portable-utf8' => 
-    array (
-      'pretty_version' => '5.4.51',
-      'version' => '5.4.51.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '578f5266725dc9880483d24ad0cfb39f8ce170f7',
-    ),
-    'voku/simple_html_dom' => 
-    array (
-      'pretty_version' => '4.7.28',
-      'version' => '4.7.28.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '78d5894c7f0facfb4fb6369af15b1a87baea958c',
-    ),
-    'yveshield/word2anki' => 
-    array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'c0c5c33254e0d94a250552c788a6f7e4145474f6',
-    ),
-  ),
 );

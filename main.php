@@ -15,7 +15,7 @@ if (is_file($auth_file) && is_readable($auth_file)) {
 }
 
 // 生词本ID https://my.eudic.net/studyList
-const BOOK_ID = 1610850441;
+const BOOK_ID = 0;
 // 牌组名称
 const DECK_NAME = '生词收集';
 
@@ -208,7 +208,7 @@ function pyd($word, $resp): array
 function eu($word): array
 {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://dict.eudic.net/dicts/en/'.htmlspecialchars($word));
+    curl_setopt($ch, CURLOPT_URL, 'https://dict.eudic.net/dicts/en/'.urlencode($word));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);

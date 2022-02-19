@@ -89,7 +89,7 @@ class XmlDomParser extends AbstractDomParser
      * @throws \BadMethodCallException
      * @throws \RuntimeException
      *
-     * @return XmlDomParser
+     * @return static
      */
     public static function __callStatic($name, $arguments)
     {
@@ -193,11 +193,7 @@ class XmlDomParser extends AbstractDomParser
         $xmlErrors = \libxml_get_errors();
         if ($sxe !== false && \count($xmlErrors) === 0) {
             $domElementTmp = \dom_import_simplexml($sxe);
-            if (
-                $domElementTmp
-                &&
-                $domElementTmp->ownerDocument instanceof \DOMDocument
-            ) {
+            if ($domElementTmp->ownerDocument instanceof \DOMDocument) {
                 $documentFound = true;
                 $this->document = $domElementTmp->ownerDocument;
             }
@@ -265,7 +261,7 @@ class XmlDomParser extends AbstractDomParser
      */
     public function find(string $selector, $idx = null)
     {
-        $xPathQuery = SelectorConverter::toXPath($selector, true);
+        $xPathQuery = SelectorConverter::toXPath($selector, true, false);
 
         $xPath = new \DOMXPath($this->document);
 
@@ -499,7 +495,7 @@ class XmlDomParser extends AbstractDomParser
      * @param string   $html
      * @param int|null $libXMLExtraOptions
      *
-     * @return self
+     * @return $this
      */
     public function loadHtml(string $html, $libXMLExtraOptions = null): DomParserInterface
     {
@@ -516,7 +512,7 @@ class XmlDomParser extends AbstractDomParser
      *
      * @throws \RuntimeException
      *
-     * @return XmlDomParser
+     * @return $this
      */
     public function loadHtmlFile(string $filePath, $libXMLExtraOptions = null): DomParserInterface
     {
@@ -576,7 +572,7 @@ class XmlDomParser extends AbstractDomParser
      * @param string   $xml
      * @param int|null $libXMLExtraOptions
      *
-     * @return XmlDomParser
+     * @return $this
      */
     public function loadXml(string $xml, $libXMLExtraOptions = null): self
     {
@@ -593,7 +589,7 @@ class XmlDomParser extends AbstractDomParser
      *
      * @throws \RuntimeException
      *
-     * @return XmlDomParser
+     * @return $this
      */
     public function loadXmlFile(string $filePath, $libXMLExtraOptions = null): self
     {
