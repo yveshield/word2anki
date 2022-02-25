@@ -208,7 +208,7 @@ function pyd($word, $resp): array
 function eu($word): array
 {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://dict.eudic.net/dicts/en/'.urlencode($word));
+    curl_setopt($ch, CURLOPT_URL, 'https://dict.eudic.net/dicts/en/'.rawurlencode($word));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -233,7 +233,7 @@ function peu($word, $resp): array
         return ['term' => $word];
     }
     $dom = HtmlDomParser::str_get_html($resp);
-
+    echo $resp;
     $div = $dom->findOne('#ExpFCChild');
     if (empty($div)) {
         return ['term' => $word];
@@ -260,7 +260,14 @@ function peu($word, $resp): array
             foreach ($div->findMulti('script') as $childNode) {
                 $in = str_replace($childNode->outerHtml(), '', $in);
             }
-            $exp[] = trim(strip_tags($in));
+            $e = trim(strip_tags($in));
+            if (!empty($e)) {
+                $exp[] = $e;
+            }
+            $e = ajaxtrans($word);
+            if (!empty($e)) {
+                $exp[] = $e;
+            }
         }
     }
 
@@ -610,4 +617,23 @@ function posturl($data)
     curl_close($curl);
 
     return json_decode($output, true);
+}
+
+function ajaxtrans($data)
+{
+    $data = urlencode($data);
+    $data = "to=zh-CN&from=en&text=${data}&contentType=text%2Fplain";
+    $headerArray = ["Content-type:application/x-www-form-urlencoded; charset='UTF-8'", 'Accept:*/*'];
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, 'https://dict.eudic.net/Home/TranslationAjax');
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headerArray);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $output = curl_exec($curl);
+    curl_close($curl);
+
+    return $output;
 }
