@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use voku\helper\HtmlDomParser;
 
@@ -51,28 +52,32 @@ while (true) {
     $index = $start * PAGE_SIZE;
     foreach ($data['data'] as $id => $datum) {
         ++$index;
-        if (!findNotes($datum['word'])) {
-            $em = 0;
-            $pa = peu(...eu($datum['word']));
-            foreach ($fields as $field) {
-                if (empty($pa[$field])) {
-                    ++$em;
-                }
-            }
-            if ($em > 1) {
-                $pb = pyd(...yd($datum['word']));
-                foreach ($fields as $field) {
-                    if (empty($pa[$field])) {
-                        $pa[$field] = !empty($pb[$field]) ? $pb[$field] : '';
-                    }
-                }
-            }
-            if (!anki($pa)) {
-                echo $datum['word']." Fail\n";
-                continue;
+        $ret0 = findNotes('deck:'.DECK_NAME.' term:'.$datum['word']);
+        $ret1 = findNotes('word:'.$datum['word']);
+        if (!empty($ret0) || !empty($ret1)) {
+            echo $index.": ".$datum['word']." exist.\n";
+            continue;
+        }
+        $em = 0;
+        $pa = peu(...eu($datum['word']));
+        foreach ($fields as $field) {
+            if (empty($pa[$field])) {
+                ++$em;
             }
         }
-        echo $datum['word']." OK\n";
+        if ($em > 1) {
+            $pb = pyd(...yd($datum['word']));
+            foreach ($fields as $field) {
+                if (empty($pa[$field])) {
+                    $pa[$field] = !empty($pb[$field]) ? $pb[$field] : '';
+                }
+            }
+        }
+        if (!addNote($pa)) {
+            echo $datum['word']." Fail\n";
+            continue;
+        }
+        echo $index.": ".$datum['word']." OK.\n";
     }
     if (is_writable($flag_file)) {
         file_put_contents($flag_file, $index);
@@ -91,14 +96,14 @@ function study($auth, $page = 1)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://api.frdic.com/api/open/v1/studylist/words/'.BOOK_ID.'?language=en&page_size='.PAGE_SIZE.'&page='.$page);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Authorization: '.$auth,
     ]);
     $response = curl_exec($ch);
     if (!$response || 200 != curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-        die('Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch));
+        die('Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch))."\n";
     }
     curl_close($ch);
 
@@ -122,7 +127,7 @@ function yd($word): array
     ]);
     $response = curl_exec($ch);
     if (!$response) {
-        die('Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch));
+        die('Error: "'.curl_error($ch).'" - Code: '.curl_errno($ch))."\n";
     }
     curl_close($ch);
 
@@ -233,7 +238,6 @@ function peu($word, $resp): array
         return ['term' => $word];
     }
     $dom = HtmlDomParser::str_get_html($resp);
-    echo $resp;
     $div = $dom->findOne('#ExpFCChild');
     if (empty($div)) {
         return ['term' => $word];
@@ -345,7 +349,59 @@ function peu($word, $resp): array
     ];
 }
 
-function anki($dict): bool
+function down_file($url, $file): bool
+{
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    $fp = fopen($file, 'w+');
+    curl_setopt($curl, CURLOPT_FILE, $fp);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 50);
+
+    curl_exec($curl);
+
+    $return = 200 == curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+    fclose($fp);
+    curl_close($curl);
+
+    return $return;
+}
+
+function file_ext($file): string
+{
+    $finfo = finfo_open(FILEINFO_EXTENSION); // gib den MIME-Typ nach Art der mimetype Extension zurück
+    $extensions = finfo_file($finfo, $file);
+    finfo_close($finfo);
+    if (!$extensions) {
+        return '';
+    }
+    $extensions = explode('/', $extensions);
+
+    return $extensions[0];
+}
+
+// Card Actions
+
+function suspend($query): bool
+{
+    $json = '{"action":"suspend","version":6,"params":{"cards":['.$query.']}}';
+    $notes = posturl($json);
+
+    return $notes['result'];
+}
+
+function suspended($query): bool
+{
+    $json = '{"action":"suspended","version":6,"params":{"card":'.$query.'}}';
+    $notes = posturl($json);
+
+    return $notes['result'];
+}
+
+// Note Actions
+
+function addNote($dict): bool
 {
     if (empty($dict)) {
         return false;
@@ -446,45 +502,29 @@ function anki($dict): bool
     return !empty($data[1]['result'] || 'cannot create note because it is a duplicate' == $data[1]['error']);
 }
 
-function down_file($url, $file): bool
+function findNotes($query): array
 {
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, $url);
-    $fp = fopen($file, 'w+');
-    curl_setopt($curl, CURLOPT_FILE, $fp);
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 50);
-
-    curl_exec($curl);
-
-    $return = 200 == curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-    fclose($fp);
-    curl_close($curl);
-
-    return $return;
-}
-
-function file_ext($file): string
-{
-    $finfo = finfo_open(FILEINFO_EXTENSION); // gib den MIME-Typ nach Art der mimetype Extension zurück
-    $extensions = finfo_file($finfo, $file);
-    finfo_close($finfo);
-    if (!$extensions) {
-        return '';
-    }
-    $extensions = explode('/', $extensions);
-
-    return $extensions[0];
-}
-
-function findNotes($word): bool
-{
-    $json = '{"action":"findNotes","version":6,"params":{"query":"deck:'.DECK_NAME.' term:'.$word.'"}}';
+    $json = '{"action":"findNotes","version":6,"params":{"query":"'.$query.'"}}';
     $notes = posturl($json);
 
-    return !empty($notes['result']);
+    return $notes['result'];
 }
+
+function notesInfo($query): array
+{
+    $json = '{"action":"notesInfo","version":6,"params":{"notes":['.$query.']}}';
+    $notes = posturl($json);
+
+    return $notes['result'];
+}
+
+function deleteNotes($query)
+{
+    $json = '{"action":"deleteNotes","version":6,"params":{"notes":['.$query.']}}';
+    $notes = posturl($json);
+}
+
+// Model Actions
 
 function modelFieldNames()
 {
@@ -578,6 +618,8 @@ end,
     posturl($data);
 }
 
+// Deck Actions
+
 function deckNames()
 {
     $json = '{"action": "deckNames","version": 6}';
@@ -604,6 +646,7 @@ function posturl($data)
     if (is_array($data)) {
         $data = json_encode($data);
     }
+    // echo $data, "\n";
     $headerArray = ["Content-type:application/json;charset='utf-8'", 'Accept:application/json'];
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, 'http://127.0.0.1:8765');
@@ -615,6 +658,7 @@ function posturl($data)
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $output = curl_exec($curl);
     curl_close($curl);
+    // echo $output, "\n";
 
     return json_decode($output, true);
 }
@@ -623,6 +667,7 @@ function ajaxtrans($data)
 {
     $data = urlencode($data);
     $data = "to=zh-CN&from=en&text=${data}&contentType=text%2Fplain";
+    // echo $data, "\n";
     $headerArray = ["Content-type:application/x-www-form-urlencoded; charset='UTF-8'", 'Accept:*/*'];
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, 'https://dict.eudic.net/Home/TranslationAjax');
@@ -634,6 +679,7 @@ function ajaxtrans($data)
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $output = curl_exec($curl);
     curl_close($curl);
+    // echo $output, "\n";
 
     return $output;
 }

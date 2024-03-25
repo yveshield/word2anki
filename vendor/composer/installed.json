@@ -2,23 +2,23 @@
     "packages": [
         {
             "name": "symfony/css-selector",
-            "version": "v6.0.3",
-            "version_normalized": "6.0.3.0",
+            "version": "v6.4.3",
+            "version_normalized": "6.4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "1955d595c12c111629cc814d3f2a2ff13580508a"
+                "reference": "ee0f7ed5cf298cc019431bb3b3977ebc52b86229"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/1955d595c12c111629cc814d3f2a2ff13580508a",
-                "reference": "1955d595c12c111629cc814d3f2a2ff13580508a",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/ee0f7ed5cf298cc019431bb3b3977ebc52b86229",
+                "reference": "ee0f7ed5cf298cc019431bb3b3977ebc52b86229",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2"
+                "php": ">=8.1"
             },
-            "time": "2022-01-02T09:55:41+00:00",
+            "time": "2024-01-23T14:51:35+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -50,7 +50,7 @@
             "description": "Converts CSS selectors to XPath expressions",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/css-selector/tree/v6.0.3"
+                "source": "https://github.com/symfony/css-selector/tree/v6.4.3"
             },
             "funding": [
                 {
@@ -70,17 +70,17 @@
         },
         {
             "name": "symfony/polyfill-iconv",
-            "version": "v1.24.0",
-            "version_normalized": "1.24.0.0",
+            "version": "v1.29.0",
+            "version_normalized": "1.29.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-iconv.git",
-                "reference": "f1aed619e28cb077fc83fac8c4c0383578356e40"
+                "reference": "cd4226d140ecd3d0f13d32ed0a4a095ffe871d2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/f1aed619e28cb077fc83fac8c4c0383578356e40",
-                "reference": "f1aed619e28cb077fc83fac8c4c0383578356e40",
+                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/cd4226d140ecd3d0f13d32ed0a4a095ffe871d2f",
+                "reference": "cd4226d140ecd3d0f13d32ed0a4a095ffe871d2f",
                 "shasum": ""
             },
             "require": {
@@ -92,12 +92,9 @@
             "suggest": {
                 "ext-iconv": "For best performance"
             },
-            "time": "2022-01-04T09:04:05+00:00",
+            "time": "2024-01-29T20:11:03+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.23-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -136,7 +133,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-iconv/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-iconv/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -156,17 +153,17 @@
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
-            "version": "v1.24.0",
-            "version_normalized": "1.24.0.0",
+            "version": "v1.29.0",
+            "version_normalized": "1.29.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-grapheme.git",
-                "reference": "81b86b50cf841a64252b439e738e97f4a34e2783"
+                "reference": "32a9da87d7b3245e09ac426c83d334ae9f06f80f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-grapheme/zipball/81b86b50cf841a64252b439e738e97f4a34e2783",
-                "reference": "81b86b50cf841a64252b439e738e97f4a34e2783",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-grapheme/zipball/32a9da87d7b3245e09ac426c83d334ae9f06f80f",
+                "reference": "32a9da87d7b3245e09ac426c83d334ae9f06f80f",
                 "shasum": ""
             },
             "require": {
@@ -175,12 +172,9 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "time": "2021-11-23T21:10:46+00:00",
+            "time": "2024-01-29T20:11:03+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.23-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -220,7 +214,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-grapheme/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-intl-grapheme/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -240,17 +234,17 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.24.0",
-            "version_normalized": "1.24.0.0",
+            "version": "v1.29.0",
+            "version_normalized": "1.29.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
-                "reference": "8590a5f561694770bdcd3f9b5c69dde6945028e8"
+                "reference": "bc45c394692b948b4d383a08d7753968bed9a83d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/8590a5f561694770bdcd3f9b5c69dde6945028e8",
-                "reference": "8590a5f561694770bdcd3f9b5c69dde6945028e8",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/bc45c394692b948b4d383a08d7753968bed9a83d",
+                "reference": "bc45c394692b948b4d383a08d7753968bed9a83d",
                 "shasum": ""
             },
             "require": {
@@ -259,12 +253,9 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "time": "2021-02-19T12:13:01+00:00",
+            "time": "2024-01-29T20:11:03+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.23-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -307,7 +298,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -327,17 +318,17 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.24.0",
-            "version_normalized": "1.24.0.0",
+            "version": "v1.29.0",
+            "version_normalized": "1.29.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "0abb51d2f102e00a4eefcf46ba7fec406d245825"
+                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/0abb51d2f102e00a4eefcf46ba7fec406d245825",
-                "reference": "0abb51d2f102e00a4eefcf46ba7fec406d245825",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
+                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
                 "shasum": ""
             },
             "require": {
@@ -349,12 +340,9 @@
             "suggest": {
                 "ext-mbstring": "For best performance"
             },
-            "time": "2021-11-30T18:21:41+00:00",
+            "time": "2024-01-29T20:11:03+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.23-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -393,7 +381,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -413,28 +401,25 @@
         },
         {
             "name": "symfony/polyfill-php72",
-            "version": "v1.24.0",
-            "version_normalized": "1.24.0.0",
+            "version": "v1.29.0",
+            "version_normalized": "1.29.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php72.git",
-                "reference": "9a142215a36a3888e30d0a9eeea9766764e96976"
+                "reference": "861391a8da9a04cbad2d232ddd9e4893220d6e25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/9a142215a36a3888e30d0a9eeea9766764e96976",
-                "reference": "9a142215a36a3888e30d0a9eeea9766764e96976",
+                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/861391a8da9a04cbad2d232ddd9e4893220d6e25",
+                "reference": "861391a8da9a04cbad2d232ddd9e4893220d6e25",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1"
             },
-            "time": "2021-05-27T09:17:38+00:00",
+            "time": "2024-01-29T20:11:03+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.23-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -472,7 +457,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php72/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-php72/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -671,17 +656,17 @@
         },
         {
             "name": "voku/simple_html_dom",
-            "version": "4.8.2",
-            "version_normalized": "4.8.2.0",
+            "version": "4.8.8",
+            "version_normalized": "4.8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/simple_html_dom.git",
-                "reference": "ad13ad8c0f9d333a5651726936c14cb7b1548844"
+                "reference": "9ef90f0280fe16054c117e04ea86617ce0fcdd35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/simple_html_dom/zipball/ad13ad8c0f9d333a5651726936c14cb7b1548844",
-                "reference": "ad13ad8c0f9d333a5651726936c14cb7b1548844",
+                "url": "https://api.github.com/repos/voku/simple_html_dom/zipball/9ef90f0280fe16054c117e04ea86617ce0fcdd35",
+                "reference": "9ef90f0280fe16054c117e04ea86617ce0fcdd35",
                 "shasum": ""
             },
             "require": {
@@ -697,7 +682,7 @@
             "suggest": {
                 "voku/portable-utf8": "If you need e.g. UTF-8 fixed output."
             },
-            "time": "2022-02-15T12:05:09+00:00",
+            "time": "2023-02-12T16:15:15+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -713,17 +698,17 @@
                 {
                     "name": "dimabdc",
                     "email": "support@titor.ru",
-                    "homepage": "http://github.com/dimabdc",
+                    "homepage": "https://github.com/dimabdc",
                     "role": "Developer"
                 },
                 {
                     "name": "Lars Moelleken",
-                    "homepage": "http://www.moelleken.org/",
-                    "role": "Developer"
+                    "homepage": "https://www.moelleken.org/",
+                    "role": "Fork-Maintainer"
                 }
             ],
             "description": "Simple HTML DOM package.",
-            "homepage": "http://simplehtmldom.sourceforge.net/",
+            "homepage": "https://github.com/voku/simple_html_dom",
             "keywords": [
                 "HTML Parser",
                 "dom",
@@ -731,7 +716,7 @@
             ],
             "support": {
                 "issues": "https://github.com/voku/simple_html_dom/issues",
-                "source": "https://github.com/voku/simple_html_dom/tree/4.8.2"
+                "source": "https://github.com/voku/simple_html_dom/tree/4.8.8"
             },
             "funding": [
                 {
